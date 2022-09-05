@@ -21,8 +21,12 @@ if [ "$DB" == "mysql" ]; then
     .github/workflows/ci/config-mysql.sh
 fi
 
+# run needed scripts
+/opt/otrs/bin/otrs.SetPermissions.pl
+su -c "bin/otrs.CheckSum.pl -a create" - otrs
+touch /opt/otrs/installed
+
 # prepare Selenium tests
-echo $GITHUB_JOB
 if [ "$GITHUB_JOB" == "SeleniumTest-MySQL" ]; then
 chmod 777 -R /opt/otrs/scripts/test/sample
 sed -i 's/\(.*\$DIBI\$.*\)/\1                      \
@@ -43,11 +47,6 @@ sed -i 's/\(.*\$DIBI\$.*\)/\1                      \
         },                                         \
     },\n/' /opt/otrs/Kernel/Config.pm
 fi
-
-# run needed scripts
-/opt/otrs/bin/otrs.SetPermissions.pl
-su -c "bin/otrs.CheckSum.pl -a create" - otrs
-touch /opt/otrs/installed
 
 if [ "$DB" ]; then
     su -c "bin/otrs.Console.pl Maint::Config::Rebuild" - otrs
