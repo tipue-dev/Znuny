@@ -22,8 +22,8 @@ if [ "$DB" == "mysql" ]; then
 fi
 
 # prepare Selenium tests
-echo ${{ github.job }}
-if [ "${{ github.job }}" == "SeleniumTest-MySQL" ]; then
+echo $GITHUB_JOB
+if [ "$GITHUB_JOB" == "SeleniumTest-MySQL" ]; then
 chmod 777 -R /opt/otrs/scripts/test/sample
 sed -i 's/\(.*\$DIBI\$.*\)/\1                      \
     \$Self->{"TestHTTPHostname"} = "172.18.0.2";   \
