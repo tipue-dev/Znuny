@@ -33,6 +33,11 @@ jobs:
           MYSQL_ROOT_PASSWORD: "secret"
           MYSQL_PASSWORD: "secret"
           MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
@@ -49,3 +54,12 @@ jobs:
         run: |
           su -c "bin/otrs.CheckSum.pl -a create" - otrs
           su -c "bin/otrs.Console.pl Dev::UnitTest::Run --directory Selenium" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
