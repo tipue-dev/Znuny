@@ -14,8 +14,8 @@ on:
         type: string
 
 jobs:
-  UnitTest-MySQL:
-    name: UnitTest:MySQL
+  Selenium-Admin:
+    name: Selenium:Admin
     runs-on: ubuntu-latest
     container: debian:10-slim
     
