@@ -53,6 +53,7 @@ jobs:
       - name: Run UnitTests
         run: |
           su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Customer/Ajax/ErrorHandling" - otrs
           su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling" - otrs
 
       - name: Archive screenshots from selenium
