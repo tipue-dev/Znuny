@@ -242,8 +242,10 @@ JAVASCRIPT
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AgentTicketZoom;TicketID=$TicketID");
 
         # Open the owner change dialog.
+        sleep 3;
         $Selenium->execute_script("\$('.Cluster ul ul#nav-People-container').addClass('ForceVisible');");
-        $Selenium->find_element("//a[contains(\@href, \'Action=AgentTicketOwner' )]")->click();
+        sleep 3;
+        $Selenium->find_element("//div[\@class='ContentColumn']//a[contains(\@href, \'Action=AgentTicketOwner' )]")->click();
 
         $Selenium->WaitFor( WindowCount => 2 );
         my $Handles = $Selenium->get_window_handles();
