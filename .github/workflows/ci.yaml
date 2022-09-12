@@ -14,8 +14,8 @@ on:
         type: string
 
 jobs:
-  Selenium-Admin:
-    name: Selenium:Admin
+  Selenium-1:
+    name: Selenium:Admin1
     runs-on: ubuntu-latest
     container: debian:10-slim
     
@@ -53,8 +53,456 @@ jobs:
       - name: Run UnitTests
         run: |
           su -c "bin/otrs.CheckSum.pl -a create" - otrs
-          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Customer/Ajax/ErrorHandling" - otrs
           su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-2:
+    name: Selenium:Admin2
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling Selenium/Customer/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+  Selenium-3:
+    name: Selenium:Admin3
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-4:
+    name: Selenium:Admin4
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling Selenium/Customer/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-5:
+    name: Selenium:Admin5
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-6:
+    name: Selenium:Admin6
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling Selenium/Customer/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-7:
+    name: Selenium:Admin7
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-8:
+    name: Selenium:Admin8
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling Selenium/Customer/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-9:
+    name: Selenium:Admin9
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling" - otrs
+
+      - name: Archive screenshots from selenium
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: Download all selenium screenshots
+          retention-days: 1
+          path: /opt/otrs/var/httpd/htdocs/SeleniumScreenshots/*.png
+          if-no-files-found: ignore
+
+  Selenium-10:
+    name: Selenium:Admin10
+    runs-on: ubuntu-latest
+    container: debian:10-slim
+    
+    env:
+      DB: mysql
+      MYSQL_USER: "otrs"
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_PASSWORD: "secret"
+      MYSQL_DATABASE: "otrs"
+    services:
+      mariadb:
+        image: mariadb:10
+        env:
+          MYSQL_USER: "otrs"
+          MYSQL_ROOT_PASSWORD: "secret"
+          MYSQL_PASSWORD: "secret"
+          MYSQL_DATABASE: "otrs"
+      chrome:
+        image: selenium/standalone-chrome:3.141.59-oxygen
+        options: --shm-size="2g"
+        volumes:
+          - ${{ github.workspace }}:/opt/otrs
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        env:
+          fetch-depth: "1"
+
+      - name: Install dependencies
+        run: .github/workflows/ci/dependencies.sh
+
+      - name: Setup Znuny
+        run: .github/workflows/ci/setup.sh
+
+      - name: Run UnitTests
+        run: |
+          su -c "bin/otrs.CheckSum.pl -a create" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test Selenium/Agent/Ajax/ErrorHandling Selenium/Customer/Ajax/ErrorHandling" - otrs
 
       - name: Archive screenshots from selenium
         if: failure()
