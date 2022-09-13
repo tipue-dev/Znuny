@@ -74,6 +74,9 @@ $Selenium->RunTest(
             'Check for opened alert text',
         );
 
+        # the footer is in the way some times
+        sleep(1);
+
         # Close dialog.
         $Selenium->find_element( '#DialogButton2', 'css' )->click();
 
