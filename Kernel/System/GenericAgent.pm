@@ -280,6 +280,12 @@ sub JobRun {
 
         next DYNAMICFIELD if !IsArrayRefWithData($SearchFieldPreferences);
 
+        if ( $Job{ 'SearchEmpty_DynamicField_' . $DynamicFieldConfig->{Name} } ) {
+            $DynamicFieldSearchParameters{ 'DynamicField_' . $DynamicFieldConfig->{Name} }
+                = { Empty => 1 };
+            next DYNAMICFIELD;
+        }
+
         PREFERENCE:
         for my $Preference ( @{$SearchFieldPreferences} ) {
 

@@ -212,11 +212,19 @@ sub Run {
             }
         }
 
+        # get dynamic fields to search empty
+        # my @EmptyDynamicFields = $ParamObject->GetArray( Param => 'AddEmptyDynamicFields' );
+        my %SearchEmptyDynamicFields = map { $_ => 1 } $ParamObject->GetArray( Param => 'AddEmptyDynamicFields' );# @EmptyDynamicFields;
+
         # get Dynamic fields for search from web request
         # cycle trough the activated Dynamic Fields for this screen
         DYNAMICFIELD:
         for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
             next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
+            if ($SearchEmptyDynamicFields{ $DynamicFieldConfig->{Name} }) {
+                $DynamicFieldValues{'SearchEmpty_DynamicField_'.$DynamicFieldConfig->{Name}} = 1;
+                next DYNAMICFIELD
+            }
 
             # get search field preferences
             my $SearchFieldPreferences = $DynamicFieldBackendObject->SearchFieldPreferences(
@@ -452,7 +460,8 @@ sub Run {
             );
         }
 
-        $DynamicFieldHTML->{ID} = $SelectedValue;
+        $DynamicFieldHTML->{ID}   = $SelectedValue;
+        $DynamicFieldHTML->{Name} = $DynamicFieldConfig->{Name};
 
         my $Output = $LayoutObject->JSONEncode(
             Data => $DynamicFieldHTML,
@@ -1111,7 +1120,10 @@ sub _MaskUpdate {
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
     my @AddDynamicFields;
+    my %UnusedDynamicFields;
+    my %SearchEmptyDynamicFields;
     my %DynamicFieldsJS;
+    my %SearchFieldsJS;
 
     # cycle through the activated Dynamic Fields for this screen
     DYNAMICFIELD:
@@ -1130,6 +1142,11 @@ sub _MaskUpdate {
             $DynamicFieldConfig->{Label},
         );
 
+        $UnusedDynamicFields{ $DynamicFieldConfig->{Name} } = $TranslatedDynamicFieldLabel;
+        if ( $JobData{ 'SearchEmpty_DynamicField_'.$DynamicFieldConfig->{Name} } ) {
+            $SearchEmptyDynamicFields{ $DynamicFieldConfig->{Name} } = 1;
+        }
+
         PREFERENCE:
         for my $Preference ( @{$SearchFieldPreferences} ) {
 
@@ -1147,10 +1164,15 @@ sub _MaskUpdate {
 
             # Save all dynamic fields for JS.
             $DynamicFieldsJS{$Key} = {
-                ID   => $DynamicFieldConfig->{ID},
-                Type => $Preference->{Type},
-                Text => $Text,
+                ID    => $DynamicFieldConfig->{ID},
+                Type  => $Preference->{Type},
+                Text  => $Text,
+                Label => $TranslatedDynamicFieldLabel,
+                Name  => $DynamicFieldConfig->{Name},
             };
+
+            # save mapping for dynamic field and it's keys
+            push @{$SearchFieldsJS{$DynamicFieldConfig->{Name}}}, $Key;
 
             # Decide if dynamic field go to add fields dropdown or selected fields area.
             if ( defined $JobData{$Key} ) {
@@ -1174,10 +1196,12 @@ sub _MaskUpdate {
                         Label => $DynamicFieldHTML->{Label},
                         Field => $DynamicFieldHTML->{Field},
                         ID    => $Key,
+                        Name  => $DynamicFieldConfig->{Name},
                     },
                 );
-            }
-            else {
+
+                delete $UnusedDynamicFields{ $DynamicFieldConfig->{Name} };
+            } elsif ( !$SearchEmptyDynamicFields{ $DynamicFieldConfig->{Name} } ) {
                 push @AddDynamicFields, {
                     Key   => $Key,
                     Value => $Text,
@@ -1193,11 +1217,25 @@ sub _MaskUpdate {
         Multiple     => 0,
         Class        => 'Modernize',
     );
+    my $EmptyDynamicFieldsStrg = $LayoutObject->BuildSelection(
+        PossibleNone => 1,
+        Data         => \%UnusedDynamicFields,
+        SelectedID   => [keys %SearchEmptyDynamicFields],
+        Name         => 'AddEmptyDynamicFields',
+        Multiple     => 1,
+        Class        => 'Modernize ForAddDynamicFields',
+    );
     $LayoutObject->Block(
         Name => 'AddDynamicFields',
         Data => {
             DynamicFieldsStrg => $DynamicFieldsStrg,
+            EmptyDynamicFieldsStrg => $EmptyDynamicFieldsStrg,
         },
+    );
+
+    $LayoutObject->AddJSData(
+        Key   => 'SearchFieldsJS',
+        Value => \%SearchFieldsJS,
     );
 
     # create dynamic field HTML for set with historical data options
@@ -1477,7 +1515,11 @@ sub _MaskRun {
         PREFERENCE:
         for my $Preference ( @{$SearchFieldPreferences} ) {
 
-            if (
+            if ( $JobData{ 'SearchEmpty_DynamicField_' . $DynamicFieldConfig->{Name} } ) {
+                $DynamicFieldSearchParameters{ 'DynamicField_' . $DynamicFieldConfig->{Name} }
+                    = { Empty => 1 };
+                next PREFERENCE;
+            } elsif (
                 !$JobData{
                     'Search_DynamicField_'
                         . $DynamicFieldConfig->{Name}

@@ -459,6 +459,12 @@
                         <label>[% Translate("Dynamic fields") | html %]</label>
                         <div class="Clear"></div>
 [% RenderBlockStart("AddDynamicFields") %]
+                            <label>[% Translate("Match empty") | html %]:</label>
+                                <div class="Field" data-widget="Select">
+                                    [% Data.EmptyDynamicFieldsStrg %]
+                                </div>
+                            <div class="Clear"></div>
+
                             <label>[% Translate("Add dynamic field") | html %]:</label>
                                 <div class="Field" data-widget="Select">
                                     [% Data.DynamicFieldsStrg %]
@@ -469,7 +475,7 @@
                         <fieldset id="SelectedDynamicFields" class="TableLike">
 [% RenderBlockStart("SelectedDynamicFields") %]
                             [% Data.Label %]
-                            <div class="Field" data-id="[% Data.ID %]">
+                            <div class="Field" data-id="[% Data.ID %]" data-field-name="[% Data.Name %]">
                                 [% Data.Field %]
                             </div>
                             <div class="Clear"></div>
