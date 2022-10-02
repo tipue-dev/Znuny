@@ -777,6 +777,11 @@
                         <div class="Clear"></div>
 [% RenderBlockStart("AddNewDynamicFields") %]
                         <fieldset class="TableLike">
+                            <label>[% Translate("Clear dynamic field") | html %]:</label>
+                                <div class="Field" data-widget="Update">
+                                    [% Data.ClearDynamicFieldsStrg %]
+                                </div>
+                            <div class="Clear"></div>
                             <label>[% Translate("Add dynamic field") | html %]:</label>
                                 <div class="Field" data-widget="Update">
                                     [% Data.NewDynamicFieldsStrg %]

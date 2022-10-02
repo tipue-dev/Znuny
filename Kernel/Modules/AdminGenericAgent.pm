@@ -213,18 +213,27 @@ sub Run {
         }
 
         # get dynamic fields to search empty
-        # my @EmptyDynamicFields = $ParamObject->GetArray( Param => 'AddEmptyDynamicFields' );
         my %SearchEmptyDynamicFields = map { $_ => 1 } $ParamObject->GetArray( Param => 'AddEmptyDynamicFields' );# @EmptyDynamicFields;
+
+        # get dynamic fields to clear
+        my %ClearDynamicFields = map { $_ => 1 } $ParamObject->GetArray( Param => 'ClearDynamicFields' );# @EmptyDynamicFields;
 
         # get Dynamic fields for search from web request
         # cycle trough the activated Dynamic Fields for this screen
         DYNAMICFIELD:
         for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
             next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
+
+            my $Skip;
             if ($SearchEmptyDynamicFields{ $DynamicFieldConfig->{Name} }) {
                 $DynamicFieldValues{'SearchEmpty_DynamicField_'.$DynamicFieldConfig->{Name}} = 1;
-                next DYNAMICFIELD
+                $Skip = 1;
             }
+            if ($ClearDynamicFields{ 'DynamicField_' . $DynamicFieldConfig->{Name} }) {
+                $DynamicFieldValues{'Clear_DynamicField_'.$DynamicFieldConfig->{Name}} = 1;
+                $Skip = 1;
+            }
+            next DYNAMICFIELD if $Skip;
 
             # get search field preferences
             my $SearchFieldPreferences = $DynamicFieldBackendObject->SearchFieldPreferences(
@@ -1245,6 +1254,8 @@ sub _MaskUpdate {
     my $ParamObject = $Kernel::OM->Get('Kernel::System::Web::Request');
 
     my @AddNewDynamicFields;
+    my %ClearDynamicFields;
+    my @ClearableDynamicFields;
 
     # cycle trough the activated Dynamic Fields for this screen
     DYNAMICFIELD:
@@ -1315,6 +1326,10 @@ sub _MaskUpdate {
             Text => $DynamicFieldConfig->{Name},
         };
 
+        if ( $JobData{ 'Clear_DynamicField_'.$DynamicFieldConfig->{Name} } ) {
+            $ClearDynamicFields{'DynamicField_'.$DynamicFieldConfig->{Name}} = 1
+        }
+
         # Decide if dynamic field go to add fields dropdown or selected fields area.
         #
         # First statement part - if we have a defined value.
@@ -1362,10 +1377,17 @@ sub _MaskUpdate {
             );
         }
         else {
-            push @AddNewDynamicFields, {
+            push @ClearableDynamicFields, {
                 Key   => $Key,
                 Value => $DynamicFieldConfig->{Name},
             };
+
+            if (!$ClearDynamicFields{ 'DynamicField_'.$DynamicFieldConfig->{Name} }) {
+                push @AddNewDynamicFields, {
+                    Key   => $Key,
+                    Value => $DynamicFieldConfig->{Name},
+                };
+            }
         }
     }
 
@@ -1376,10 +1398,19 @@ sub _MaskUpdate {
         Multiple     => 0,
         Class        => 'Modernize',
     );
+    my $ClearDynamicFieldsStrg = $LayoutObject->BuildSelection(
+        PossibleNone => 1,
+        Data         => \@ClearableDynamicFields,
+        Name         => 'ClearDynamicFields',
+        SelectedID   => [keys %ClearDynamicFields],
+        Multiple     => 1,
+        Class        => 'Modernize ForAddNewDynamicFields',
+    );
     $LayoutObject->Block(
         Name => 'AddNewDynamicFields',
         Data => {
-            NewDynamicFieldsStrg => $NewDynamicFieldsStrg,
+            NewDynamicFieldsStrg   => $NewDynamicFieldsStrg,
+            ClearDynamicFieldsStrg => $ClearDynamicFieldsStrg,
         },
     );
     $LayoutObject->AddJSData(

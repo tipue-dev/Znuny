@@ -191,6 +191,7 @@ sub JobRun {
     if ( $Self->{NoticeSTDOUT} ) {
         print "Job: '$Param{Job}'\n";
     }
+    $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ %Param ]); # TODO: Remove in final version.
 
     # get job from param
     my %Job;
@@ -216,6 +217,7 @@ sub JobRun {
 
         # get job data
         my %DBJobRaw = $Self->JobGet( Name => $Param{Job} );
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ %DBJobRaw ]); # TODO: Remove in final version.
 
         # updated last run time
         $Self->_JobUpdateRunTime(
@@ -242,8 +244,14 @@ sub JobRun {
             if ( $Key =~ m{ \A DynamicField_ }xms ) {
                 $Job{New}->{$Key} = $DBJobRaw{$Key};
             }
+            elsif ( $Key =~ m{ \A Clear_DynamicField_ }xms ) {
+                $Job{New}->{$Key} = $DBJobRaw{$Key};
+            }
             elsif ( $Key =~ m{ \A Search_DynamicField_ }xms ) {
                 $DynamicFieldSearchTemplate{$Key} = $DBJobRaw{$Key};
+            }
+            elsif ( $Key =~ m{ \A SearchEmpty_DynamicField_ }xms ) {
+                $Job{$Key} = $DBJobRaw{$Key};
             }
         }
 
@@ -1331,12 +1339,23 @@ sub _JobRunTicket {
     # get dynamic field backend objects
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
+    $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ %Param ]); # TODO: Remove in final version.
     # set new dynamic fields options
     # cycle trough the activated Dynamic Fields for this screen
     DYNAMICFIELD:
     for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
 
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
+
+        if ( $Param{Config}->{New}->{'Clear_DynamicField_'.$DynamicFieldConfig->{Name}} ) {
+            $DynamicFieldBackendObject->ValueDelete(
+                DynamicFieldConfig => $DynamicFieldConfig,
+                ObjectID           => $Param{TicketID},
+                UserID             => $Param{UserID},
+            );
+
+            next DYNAMICFIELD;
+        }
 
         # extract the dynamic field value from the web request
         my $Value = $DynamicFieldBackendObject->EditFieldValueGet(

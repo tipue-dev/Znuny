@@ -136,8 +136,22 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
         AddSelectClearButton();
 
         // TODO: maybe make this work for search and set?!
-        $('#AddEmptyDynamicFields').on('change', function(){
-            var SearchFields = Object.assign({},Core.Config.Get('SearchFieldsJS'));;
+        $('#AddEmptyDynamicFields, #ClearDynamicFields').on('change', function(){
+            var SearchFields,
+                AddFieldsID = $(this).attr('id') == 'AddEmptyDynamicFields' ? 'AddDynamicFields' : 'AddNewDynamicFields';
+
+            // create an object as mapping from key to array of keys
+            if ( AddFieldsID == 'AddDynamicFields' ) {
+                SearchFields = Object.assign({},Core.Config.Get('SearchFieldsJS'));
+            } else {
+                SearchFields = {};
+                for ( let key in Core.Config.Get('DynamicFieldsJS') ) {
+                    if ( key.match('^DynamicField_') ) {
+                        SearchFields[key] = [key];
+                        // Object.assign(SearchFields, {key: [key]});
+                    }
+                }
+            }
 
             // Remove selected fields from the add fields dropdown
             for ( let DynamicFieldName of $(this).val() ) {
@@ -146,7 +160,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                 };
 
                 for (const DynamicFieldKey of SearchFields[DynamicFieldName]) {
-                    $('#AddDynamicFields option[value=' + DynamicFieldKey + ']').remove();
+                    $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').remove();
                 }
                 delete SearchFields[DynamicFieldName];
             }
@@ -156,22 +170,25 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                 let NoOptionFound;
 
                 for (const DynamicFieldKey of SearchFields[DynamicFieldName]) {
-                    if ( $('#AddDynamicFields option[value=' + DynamicFieldKey + ']').length == 0 ) {
+                    if ( $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').length == 0 ) {
                         NoOptionFound = 1;
                     }
                 }
 
-                if ( NoOptionFound && $('[data-field-name="' + DynamicFieldName + '"]').length == 0 ) {
+                let Selector = AddFieldsID == 'AddDynamicFields' ?
+                    '[data-field-name="' + DynamicFieldName + '"]'
+                    : '#' + DynamicFieldName;
+                if ( NoOptionFound && $(Selector).length == 0 ) {
                     for ( const Key of SearchFields[DynamicFieldName] ) {
                         var Text  = Core.Config.Get('DynamicFieldsJS')[Key].Text,
                             Options,
                             OptionObjects = [];
 
                         // Add dynamic field to add fields dropdown.
-                        $('#AddDynamicFields').append('<option value=' + Key + '>' + Text + '</option>');
+                        $('#' + AddFieldsID + '').append('<option value=' + Key + '>' + Text + '</option>');
 
                         // Sort options.
-                        Options = $('#AddDynamicFields option');
+                        Options = $('#' + AddFieldsID + ' option');
                         OptionObjects = Options.map(function(_, Element) { return { Text: $(Element).text(), Value: Element.value }; }).get();
                         OptionObjects.sort(function(Object1, Object2) { return Object1.Text > Object2.Text ? 1 : Object1.Text < Object2.Text ? -1 : 0; });
                         Options.each(function(Index, Element) {
@@ -180,10 +197,9 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                         });
                     }
                 }
-
             }
 
-            $('#AddDynamicFields').val('').trigger('redraw.InputField').trigger('change');
+            $('#' + AddFieldsID + '').val('').trigger('redraw.InputField').trigger('change');
 
         });
 
@@ -278,7 +294,11 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                 }
 
                 // Remove field from match empty selection
-                $('.For' + AddFieldsID + ' option[value=' + Response.Name + ']').remove();
+                if ( AddFieldsID == 'AddDynamicFields' ) {
+                    $('.For' + AddFieldsID + ' option[value=' + Response.Name + ']').remove();
+                }else{
+                    $('.For' + AddFieldsID + ' option[value=DynamicField_' + Response.Name + ']').remove();
+                }
 
                 // Register event for tree selection dialog
                 $('.ShowTreeSelection').off('click').on('click', function () {
@@ -316,6 +336,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
 
             // Add dynamic field to add fields dropdown.
             if ( AddFieldsID == 'AddDynamicFields' ) {
+                // add multiple fields if the dynamic field is of a date type
                 for (const DynamicFieldKey of SearchFields[Name]) {
                     const KeyText  = Core.Config.Get('DynamicFieldsJS')[DynamicFieldKey].Text;
                     $('#' + AddFieldsID).append('<option value=' + DynamicFieldKey + '>' + KeyText + '</option>');
@@ -340,10 +361,15 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
 
             // Add dynamic field to match empty selection if no other search option for this field is used
             if (
-                $('[data-field-name="' + Name + '"]').length == 0
+                AddFieldsID == 'AddDynamicFields'
+                && $('[data-field-name="' + Name + '"]').length == 0
                 && $('.For' + AddFieldsID + ' option[value="' + Name + '"]').length == 0
             ) {
                 $('.For' + AddFieldsID).append('<option value=' + Name + '>' + Label + '</option>');
+            }
+            else if ( AddFieldsID == 'AddNewDynamicFields' ) {
+                // Add dynamic field to the clear dynamic field selection
+                $('#ClearDynamicFields').append('<option value=' + Value + '>' + Text + '</option>');
             }
 
             // Sort options.
