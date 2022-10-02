@@ -145,7 +145,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                 SearchFields = Object.assign({},Core.Config.Get('SearchFieldsJS'));
             } else {
                 SearchFields = {};
-                for ( let key in Core.Config.Get('DynamicFieldsJS') ) {
+                for ( var key in Core.Config.Get('DynamicFieldsJS') ) {
                     if ( key.match('^DynamicField_') ) {
                         SearchFields[key] = [key];
                         // Object.assign(SearchFields, {key: [key]});
@@ -154,7 +154,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
             }
 
             // Remove selected fields from the add fields dropdown
-            for ( let DynamicFieldName of $(this).val() ) {
+            for ( var DynamicFieldName of $(this).val() ) {
                 if (!DynamicFieldName){ // TODO: This is needed if value is an empty array. make better
                     break;
                 };
@@ -167,7 +167,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
 
             // Add fields that are not selected to the add fields dropdown if they are not already used of in this dropdown
             for ( const DynamicFieldName in SearchFields ) {
-                let NoOptionFound;
+                var NoOptionFound;
 
                 for (const DynamicFieldKey of SearchFields[DynamicFieldName]) {
                     if ( $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').length == 0 ) {
@@ -175,7 +175,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                     }
                 }
 
-                let Selector = AddFieldsID == 'AddDynamicFields' ?
+                var Selector = AddFieldsID == 'AddDynamicFields' ?
                     '[data-field-name="' + DynamicFieldName + '"]'
                     : '#' + DynamicFieldName;
                 if ( NoOptionFound && $(Selector).length == 0 ) {
