@@ -135,57 +135,68 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
         // Add select clear button
         AddSelectClearButton();
 
-        // TODO: maybe make this work for search and set?!
         $('#AddEmptyDynamicFields, #ClearDynamicFields').on('change', function(){
             var SearchFields,
-                AddFieldsID = $(this).attr('id') == 'AddEmptyDynamicFields' ? 'AddDynamicFields' : 'AddNewDynamicFields';
+                AddFieldsID = $(this).attr('id') == 'AddEmptyDynamicFields' ? 'AddDynamicFields' : 'AddNewDynamicFields',
+                Key,
+                Text,
+                ArrayIndex,
+                ArrayIndex2,
+                DynamicFieldNames,
+                DynamicFieldName,
+                DynamicFieldKey,
+                DynamicFieldKeyIndex,
+                NoOptionFound,
+                KeyIndex,
+                Selector,
+                Options,
+                OptionObjects = [];
 
             // create an object as mapping from key to array of keys
-            if ( AddFieldsID == 'AddDynamicFields' ) {
+            if (AddFieldsID == 'AddDynamicFields') {
                 SearchFields = Object.assign({},Core.Config.Get('SearchFieldsJS'));
             } else {
                 SearchFields = {};
-                for ( var key in Core.Config.Get('DynamicFieldsJS') ) {
-                    if ( key.match('^DynamicField_') ) {
-                        SearchFields[key] = [key];
-                        // Object.assign(SearchFields, {key: [key]});
+                for (Key in Core.Config.Get('DynamicFieldsJS')) {
+                    if (Key.match('^DynamicField_')) {
+                        SearchFields[Key] = [Key];
                     }
                 }
             }
 
             // Remove selected fields from the add fields dropdown
-            var DynamicFieldNames = $(this).val();
-            for ( var ArrayIndex in DynamicFieldNames ) {
-                var DynamicFieldName = DynamicFieldNames[ArrayIndex]
+            DynamicFieldNames = $(this).val();
+            for (ArrayIndex in DynamicFieldNames) {
+                DynamicFieldName = DynamicFieldNames[ArrayIndex]
                 if (!DynamicFieldName){ // TODO: This is needed if value is an empty array. make better
                     break;
-                };
+                }
 
-                for (var ArrayIndex in SearchFields[DynamicFieldName]) {
-                    var DynamicFieldKey = SearchFields[DynamicFieldName][ArrayIndex];
+                for (ArrayIndex2 in SearchFields[DynamicFieldName]) {
+                    DynamicFieldKey = SearchFields[DynamicFieldName][ArrayIndex2];
                     $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').remove();
                 }
                 delete SearchFields[DynamicFieldName];
             }
 
             // Add fields that are not selected to the add fields dropdown if they are not already used of in this dropdown
-            for ( var DynamicFieldName in SearchFields ) {
-                var NoOptionFound;
+            for (DynamicFieldName in SearchFields) {
+                NoOptionFound = 0;
 
-                for (var DynamicFieldKey of SearchFields[DynamicFieldName]) {
-                    if ( $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').length == 0 ) {
+                for (DynamicFieldKeyIndex in SearchFields[DynamicFieldName]) {
+                    DynamicFieldKey = SearchFields[DynamicFieldName][DynamicFieldKeyIndex];
+                    if ($('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').length == 0) {
                         NoOptionFound = 1;
                     }
                 }
 
-                var Selector = AddFieldsID == 'AddDynamicFields' ?
+                Selector = AddFieldsID == 'AddDynamicFields' ?
                     '[data-field-name="' + DynamicFieldName + '"]'
                     : '#' + DynamicFieldName;
-                if ( NoOptionFound && $(Selector).length == 0 ) {
-                    for ( var Key of SearchFields[DynamicFieldName] ) {
-                        var Text  = Core.Config.Get('DynamicFieldsJS')[Key].Text,
-                            Options,
-                            OptionObjects = [];
+                if (NoOptionFound && $(Selector).length == 0) {
+                    for (KeyIndex in SearchFields[DynamicFieldName]) {
+                        Key   = SearchFields[DynamicFieldName][KeyIndex];
+                        Text  = Core.Config.Get('DynamicFieldsJS')[Key].Text;
 
                         // Add dynamic field to add fields dropdown.
                         $('#' + AddFieldsID + '').append('<option value=' + Key + '>' + Text + '</option>');
@@ -275,15 +286,18 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
             function (Response) {
 
                 var FieldHTML = Response.Label + '<div class="Field" data-id="' + Response.ID + '" data-field-name="' + Response.Name + '">' + Response.Field + RemoveButtonHTML + '</div><div class="Clear"></div>',
-                    SearchFields = Core.Config.Get('SearchFieldsJS');
+                    SearchFields = Core.Config.Get('SearchFieldsJS'),
+                    DynamicFieldKey,
+                    DynamicFieldKeyIndex;
 
                 // Append field HTML from response to selected fields area.
                 $('#' + SelectedFieldsID).append(FieldHTML);
                 TargetNS.InitRemoveButtonEvent($('div.Field[data-id="' + Response.ID + '"]').find('.RemoveButton'), AddFieldsID);
 
                 // Remove the field from add fields dropdown and redraw this dropdown.
-                if ( AddFieldsID == 'AddDynamicFields' ) {
-                    for (const DynamicFieldKey of SearchFields[Response.Name]) {
+                if (AddFieldsID == 'AddDynamicFields') {
+                    for (DynamicFieldKeyIndex in SearchFields[Response.Name]) {
+                        DynamicFieldKey = SearchFields[Response.Name][DynamicFieldKeyIndex];
                         $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').remove();
                     }
                 }else{
@@ -297,7 +311,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                 }
 
                 // Remove field from match empty selection
-                if ( AddFieldsID == 'AddDynamicFields' ) {
+                if (AddFieldsID == 'AddDynamicFields') {
                     $('.For' + AddFieldsID + ' option[value=' + Response.Name + ']').remove();
                 }else{
                     $('.For' + AddFieldsID + ' option[value=DynamicField_' + Response.Name + ']').remove();
@@ -335,13 +349,17 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                 Label        = Core.Config.Get('DynamicFieldsJS')[Value].Label,
                 SearchFields = Core.Config.Get('SearchFieldsJS'),
                 Options,
+                DynamicFieldKeyIndex,
+                DynamicFieldKey,
+                KeyText,
                 OptionObjects = [];
 
             // Add dynamic field to add fields dropdown.
-            if ( AddFieldsID == 'AddDynamicFields' ) {
+            if (AddFieldsID == 'AddDynamicFields') {
                 // add multiple fields if the dynamic field is of a date type
-                for (const DynamicFieldKey of SearchFields[Name]) {
-                    const KeyText  = Core.Config.Get('DynamicFieldsJS')[DynamicFieldKey].Text;
+                for (DynamicFieldKeyIndex in SearchFields[Name]) {
+                    DynamicFieldKey = SearchFields[Name][DynamicFieldKeyIndex];
+                    KeyText  = Core.Config.Get('DynamicFieldsJS')[DynamicFieldKey].Text;
                     $('#' + AddFieldsID).append('<option value=' + DynamicFieldKey + '>' + KeyText + '</option>');
                 }
             }else{
@@ -370,7 +388,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
             ) {
                 $('.For' + AddFieldsID).append('<option value=' + Name + '>' + Label + '</option>');
             }
-            else if ( AddFieldsID == 'AddNewDynamicFields' ) {
+            else if (AddFieldsID == 'AddNewDynamicFields') {
                 // Add dynamic field to the clear dynamic field selection
                 $('#ClearDynamicFields').append('<option value=' + Value + '>' + Text + '</option>');
             }
