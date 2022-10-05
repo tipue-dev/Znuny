@@ -154,22 +154,25 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
             }
 
             // Remove selected fields from the add fields dropdown
-            for ( var DynamicFieldName of $(this).val() ) {
+            var DynamicFieldNames = $(this).val();
+            for ( var ArrayIndex in DynamicFieldNames ) {
+                var DynamicFieldName = DynamicFieldNames[ArrayIndex]
                 if (!DynamicFieldName){ // TODO: This is needed if value is an empty array. make better
                     break;
                 };
 
-                for (const DynamicFieldKey of SearchFields[DynamicFieldName]) {
+                for (var ArrayIndex in SearchFields[DynamicFieldName]) {
+                    var DynamicFieldKey = SearchFields[DynamicFieldName][ArrayIndex];
                     $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').remove();
                 }
                 delete SearchFields[DynamicFieldName];
             }
 
             // Add fields that are not selected to the add fields dropdown if they are not already used of in this dropdown
-            for ( const DynamicFieldName in SearchFields ) {
+            for ( var DynamicFieldName in SearchFields ) {
                 var NoOptionFound;
 
-                for (const DynamicFieldKey of SearchFields[DynamicFieldName]) {
+                for (var DynamicFieldKey of SearchFields[DynamicFieldName]) {
                     if ( $('#' + AddFieldsID + ' option[value=' + DynamicFieldKey + ']').length == 0 ) {
                         NoOptionFound = 1;
                     }
@@ -179,7 +182,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                     '[data-field-name="' + DynamicFieldName + '"]'
                     : '#' + DynamicFieldName;
                 if ( NoOptionFound && $(Selector).length == 0 ) {
-                    for ( const Key of SearchFields[DynamicFieldName] ) {
+                    for ( var Key of SearchFields[DynamicFieldName] ) {
                         var Text  = Core.Config.Get('DynamicFieldsJS')[Key].Text,
                             Options,
                             OptionObjects = [];
