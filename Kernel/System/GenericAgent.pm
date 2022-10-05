@@ -242,8 +242,14 @@ sub JobRun {
             if ( $Key =~ m{ \A DynamicField_ }xms ) {
                 $Job{New}->{$Key} = $DBJobRaw{$Key};
             }
+            elsif ( $Key =~ m{ \A Clear_DynamicField_ }xms ) {
+                $Job{New}->{$Key} = $DBJobRaw{$Key};
+            }
             elsif ( $Key =~ m{ \A Search_DynamicField_ }xms ) {
                 $DynamicFieldSearchTemplate{$Key} = $DBJobRaw{$Key};
+            }
+            elsif ( $Key =~ m{ \A SearchEmpty_DynamicField_ }xms ) {
+                $Job{$Key} = $DBJobRaw{$Key};
             }
         }
 
@@ -279,6 +285,11 @@ sub JobRun {
         );
 
         next DYNAMICFIELD if !IsArrayRefWithData($SearchFieldPreferences);
+
+        if ( $Job{ 'SearchEmpty_DynamicField_' . $DynamicFieldConfig->{Name} } ) {
+            $DynamicFieldSearchParameters{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = { Empty => 1 };
+            next DYNAMICFIELD;
+        }
 
         PREFERENCE:
         for my $Preference ( @{$SearchFieldPreferences} ) {
@@ -1331,6 +1342,16 @@ sub _JobRunTicket {
     for my $DynamicFieldConfig ( @{ $Self->{DynamicField} } ) {
 
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
+
+        if ( $Param{Config}->{New}->{ 'Clear_DynamicField_' . $DynamicFieldConfig->{Name} } ) {
+            $DynamicFieldBackendObject->ValueDelete(
+                DynamicFieldConfig => $DynamicFieldConfig,
+                ObjectID           => $Param{TicketID},
+                UserID             => $Param{UserID},
+            );
+
+            next DYNAMICFIELD;
+        }
 
         # extract the dynamic field value from the web request
         my $Value = $DynamicFieldBackendObject->EditFieldValueGet(
