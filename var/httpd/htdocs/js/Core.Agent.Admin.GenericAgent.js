@@ -168,7 +168,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
             DynamicFieldNames = $(this).val();
             for (ArrayIndex in DynamicFieldNames) {
                 DynamicFieldName = DynamicFieldNames[ArrayIndex]
-                if (!DynamicFieldName){ // TODO: This is needed if value is an empty array. make better
+                if (!DynamicFieldName){
                     break;
                 }
 
@@ -392,6 +392,7 @@ Core.Agent.Admin.GenericAgent = (function (TargetNS) {
                 // Add dynamic field to the clear dynamic field selection
                 $('#ClearDynamicFields').append('<option value=' + Value + '>' + Text + '</option>');
             }
+            $('#' + AddFieldsID).val('').trigger('redraw.InputField').trigger('change');
 
             // Sort options.
             Options = $('.For' + AddFieldsID + ' option');

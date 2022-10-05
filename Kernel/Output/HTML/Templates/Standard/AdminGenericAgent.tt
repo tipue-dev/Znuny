@@ -459,7 +459,7 @@
                         <label>[% Translate("Dynamic fields") | html %]</label>
                         <div class="Clear"></div>
 [% RenderBlockStart("AddDynamicFields") %]
-                            <label>[% Translate("Match empty") | html %]:</label>
+                            <label>[% Translate("Dynamic field without value") | html %]:</label>
                                 <div class="Field" data-widget="Select">
                                     [% Data.EmptyDynamicFieldsStrg %]
                                 </div>
