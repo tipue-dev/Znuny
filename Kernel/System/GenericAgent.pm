@@ -191,7 +191,6 @@ sub JobRun {
     if ( $Self->{NoticeSTDOUT} ) {
         print "Job: '$Param{Job}'\n";
     }
-    $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ %Param ]); # TODO: Remove in final version.
 
     # get job from param
     my %Job;
@@ -217,7 +216,6 @@ sub JobRun {
 
         # get job data
         my %DBJobRaw = $Self->JobGet( Name => $Param{Job} );
-        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ %DBJobRaw ]); # TODO: Remove in final version.
 
         # updated last run time
         $Self->_JobUpdateRunTime(
@@ -1339,7 +1337,6 @@ sub _JobRunTicket {
     # get dynamic field backend objects
     my $DynamicFieldBackendObject = $Kernel::OM->Get('Kernel::System::DynamicField::Backend');
 
-    $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ %Param ]); # TODO: Remove in final version.
     # set new dynamic fields options
     # cycle trough the activated Dynamic Fields for this screen
     DYNAMICFIELD:
