@@ -75,21 +75,21 @@ $Selenium->RunTest(
         );
 
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------1------" ]); # TODO: Remove in final version.
-        sleep(5);
+
 
         # get script alias
         my $ScriptAlias = $Kernel::OM->Get('Kernel::Config')->Get('ScriptAlias');
 
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------2------" ]); # TODO: Remove in final version.
-        sleep(5);
+
 
         # navigate to AgentDashboard screen
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AgentTicketPhone");
 
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------3------" ]); # TODO: Remove in final version.
-        sleep(25);
 
-        my $test = $Selenium->execute_script("return \$('#RichTextField').html()");
+
+        my $test = $Selenium->get_log('browser');
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ $test ]); # TODO: Remove in final version.
 
         # wait for the CKE to load
@@ -99,13 +99,13 @@ $Selenium->RunTest(
         );
 
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------4------" ]); # TODO: Remove in final version.
-        sleep(5);
+
 
        # send some text to the CKE's textarea (we cant do it with Selenium directly because the textarea is not visible)
         my $SetCKEContent = 1;
 
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------5------" ]); # TODO: Remove in final version.
-        sleep(5);
+
         eval {
             $SetCKEContent = $Selenium->execute_script(
                 q{
@@ -115,7 +115,7 @@ $Selenium->RunTest(
         };
 
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------6------" ]); # TODO: Remove in final version.
-        sleep(5);
+
 
         # if the result is undef, the command succeeded (o_O)
         $Self->Is(
