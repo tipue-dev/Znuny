@@ -80,7 +80,7 @@ $Selenium->RunTest(
         # navigate to AgentDashboard screen
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AgentTicketPhone");
 
-        sleep(3);
+        sleep(10);
 
         # wait for the CKE to load
         $Selenium->WaitFor(
