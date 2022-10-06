@@ -87,9 +87,9 @@ $Selenium->RunTest(
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AgentTicketPhone");
 
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------3------" ]); # TODO: Remove in final version.
-        sleep(5);
+        sleep(25);
 
-        my $test = $Selenium->execute_script("return \$('body.cke_editable', \$('.cke_wysiwyg_frame').contents()).length");
+        my $test = $Selenium->execute_script("return \$('#RichTextField').html()");
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ $test ]); # TODO: Remove in final version.
 
         # wait for the CKE to load
