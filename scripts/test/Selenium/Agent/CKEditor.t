@@ -89,6 +89,9 @@ $Selenium->RunTest(
         $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "------3------" ]); # TODO: Remove in final version.
         sleep(5);
 
+        my $test = $Selenium->execute_script("\$('body.cke_editable', \$('.cke_wysiwyg_frame').contents()).length");
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ $test ]); # TODO: Remove in final version.
+
         # wait for the CKE to load
         $Selenium->WaitFor(
             JavaScript =>
