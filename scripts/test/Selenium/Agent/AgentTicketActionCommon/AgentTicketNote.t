@@ -394,6 +394,8 @@ $Selenium->RunTest(
                 "return \$('body.cke_editable', \$('.cke_wysiwyg_frame').contents()).length == 1;"
         );
 
+        sleep(3);
+
         # Submit note.
         $Selenium->find_element( "#submitRichText", 'css' )->click();
 
