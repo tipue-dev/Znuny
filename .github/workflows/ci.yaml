@@ -53,7 +53,7 @@ jobs:
       - name: Run UnitTests
         run: |
           su -c "bin/otrs.CheckSum.pl -a create" - otrs
-          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test scripts/test/Selenium/Agent/CKEditor.t" - otrs
+          su -c "bin/otrs.Console.pl Dev::UnitTest::Run --verbose --test scripts/test/Selenium/Agent/CKEditor" - otrs
 
       - name: Archive screenshots from selenium
         if: failure()
