@@ -377,16 +377,30 @@ $Selenium->RunTest(
         # Navigate to added note article.
         $Selenium->VerifiedGet("${ScriptAlias}index.pl?Action=AgentTicketZoom;TicketID=$TicketID;ArticleID=$ArticleID");
 
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------1--------------" ]); # TODO: Remove in final version.
+        sleep(5);
+
         # Click 'Reply to note'.
         $Selenium->find_element("//a[contains(\@href, \'ReplyToArticle' )]")->click();
 
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------2--------------" ]); # TODO: Remove in final version.
+        sleep(5);
+
         # Switch window.
         $Selenium->WaitFor( WindowCount => 2 );
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------3--------------" ]); # TODO: Remove in final version.
+        sleep(5);
         $Handles = $Selenium->get_window_handles();
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------4--------------" ]); # TODO: Remove in final version.
+        sleep(5);
         $Selenium->switch_to_window( $Handles->[1] );
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------5--------------" ]); # TODO: Remove in final version.
+        sleep(5);
 
         # Wait until page has loaded, if necessary.
         $Selenium->WaitFor( JavaScript => "return typeof(\$) === 'function';" );
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------6--------------" ]); # TODO: Remove in final version.
+        sleep(5);
 
         # Wait for the CKE to load.
         $Selenium->WaitFor(
@@ -394,10 +408,14 @@ $Selenium->RunTest(
                 "return \$('body.cke_editable', \$('.cke_wysiwyg_frame').contents()).length == 1;"
         );
 
-        sleep(3);
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------7--------------" ]); # TODO: Remove in final version.
+        sleep(5);
 
         # Submit note.
         $Selenium->find_element( "#submitRichText", 'css' )->click();
+
+        $Data::Dumper::Sortkeys = 1;print STDERR Data::Dumper->Dump([(caller(0))[3] . ' Line:' . __LINE__ , \ "-------------8--------------" ]); # TODO: Remove in final version.
+        sleep(5);
 
         # Wait until popup has closed.
         $Selenium->WaitFor( WindowCount => 1 );
