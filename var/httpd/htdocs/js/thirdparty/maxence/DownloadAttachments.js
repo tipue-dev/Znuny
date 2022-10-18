@@ -1,0 +1,1 @@
+/opt/workspace/otrs-mxc-AttachmentOverview/var/httpd/htdocs/js/thirdparty/maxence/DownloadAttachments.js
