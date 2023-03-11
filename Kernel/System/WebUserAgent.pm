@@ -64,91 +64,38 @@ sub new {
 
 =head2 Request()
 
-return the content of requested URL.
-
-Simple GET request:
+return the content of requested URL. The content-type is 'application/x-www-form-urlencoded'.
 
     my %Response = $WebUserAgentObject->Request(
-        URL => 'http://example.com/somedata.xml',
-        SkipSSLVerification => 1, # (optional)
-        NoLog               => 1, # (optional)
+        URL          => 'http://example.com/someurl',
+        Type         => 'POST',            # (optional, POST or GET), defaults to GET
+        Data         => $ArrayRef,         # (only when POST is used) use $HashRef, $ArrayRef (see below)
+        Credentials  => {                  # (optional)
+            User     => 'znuny_user',
+            Password => 'znuny_password',
+            Realm    => 'Znuny Test',
+            Location => 'download.znuny.org:80',
+        },
+        Header => {                        # (optional)
+            Authorization => 'Basic xxxx',
+        },
+        SkipSSLVerification => 1,          # (optional)
+        NoLog               => 1,          # (optional)
 
-        # Returns the response content (if available) if the request was not successful.
+        # Returns the response content (if available), if the request was not successful.
         # Otherwise only the status will be returned (default behavior).
         ReturnResponseContentOnError => 1, # optional
     );
 
-Or a POST request; attributes can be a hashref like this:
-
-    my %Response = $WebUserAgentObject->Request(
-        URL  => 'http://example.com/someurl',
-        Type => 'POST',
-        Data => { Attribute1 => 'Value', Attribute2 => 'Value2' },
-        SkipSSLVerification => 1, # (optional)
-        NoLog               => 1, # (optional)
-
-        # Returns the response content (if available) if the request was not successful.
-        # Otherwise only the status will be returned (default behavior).
-        ReturnResponseContentOnError => 1, # optional
-    );
-
-alternatively, you can use an arrayref like this:
-
-    my %Response = $WebUserAgentObject->Request(
-        URL  => 'http://example.com/someurl',
-        Type => 'POST',
-        Data => [ Attribute => 'Value', Attribute => 'OtherValue' ],
-        SkipSSLVerification => 1, # (optional)
-        NoLog               => 1, # (optional)
-
-        # Returns the response content (if available) if the request was not successful.
-        # Otherwise only the status will be returned (default behavior).
-        ReturnResponseContentOnError => 1, # optional
-    );
+    # Key-value pairs are expected. More complex data structures might not work
+    my $ArrayRef = [ Attribute => 'Value', Attribute => 'OtherValue' ];
+    my $HashRef  = { Attribute1 => 'Value', Attribute2 => 'Value2' };
 
 returns
 
     %Response = (
         Status  => '200 OK',    # http status
         Content => $ContentRef, # content of requested URL
-    );
-
-You can even pass some headers
-
-    my %Response = $WebUserAgentObject->Request(
-        URL    => 'http://example.com/someurl',
-        Type   => 'POST',
-        Data   => [ Attribute => 'Value', Attribute => 'OtherValue' ],
-        Header => {
-            Authorization => 'Basic xxxx',
-            Content_Type  => 'text/json',
-        },
-        SkipSSLVerification => 1, # (optional)
-        NoLog               => 1, # (optional)
-
-        # Returns the response content (if available) if the request was not successful.
-        # Otherwise only the status will be returned (default behavior).
-        ReturnResponseContentOnError => 1, # optional
-    );
-
-If you need to set credentials
-
-    my %Response = $WebUserAgentObject->Request(
-        URL          => 'http://example.com/someurl',
-        Type         => 'POST',
-        Data         => [ Attribute => 'Value', Attribute => 'OtherValue' ],
-        Credentials  => {
-            User     => 'otrs_user',
-            Password => 'otrs_password',
-            Realm    => 'OTRS Unittests',
-            Location => 'download.znuny.org:80',
-        },
-        SkipSSLVerification => 1, # (optional)
-        NoLog               => 1, # (optional)
-
-        # Returns the response content (if available) if the request was not successful.
-        # Otherwise only the status will be returned (default behavior).
-        ReturnResponseContentOnError => 1, # optional
     );
 
 =cut
