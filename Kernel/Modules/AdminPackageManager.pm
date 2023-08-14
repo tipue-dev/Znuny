@@ -1955,10 +1955,11 @@ sub _InstallHandling {
         );
 
         # check if any module requirements are not met
+        MODULE:
         for my $RequiredModule ( @{ $Data{ModuleRequired} } ) {
             if ( $RequiredModule->{IsInstalled} ne 'OK' ) {
                 $Data{ModuleRequirementsNotMet} = 1;
-                last;
+                last MODULE;
             }
         }
     }
