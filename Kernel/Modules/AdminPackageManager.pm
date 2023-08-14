@@ -1953,6 +1953,14 @@ sub _InstallHandling {
         $Data{ModuleRequired} = $PackageObject->GetRequiredModules(
             Structure => \%Structure,
         );
+
+        # check if any module requirements are not met
+        for my $RequiredModule ( @{ $Data{ModuleRequired} } ) {
+            if ( $RequiredModule->{IsInstalled} ne 'OK' ) {
+                $Data{ModuleRequirementsNotMet} = 1;
+                last;
+            }
+        }
     }
 
     my %Response = $PackageObject->AnalyzePackageFrameworkRequirements(

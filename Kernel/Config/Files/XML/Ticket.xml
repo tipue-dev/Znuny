@@ -5148,6 +5148,14 @@
                 <Item Key="Description" Translatable="1">Fulltext search</Item>
                 <Item Key="Block">ToolBarSearch</Item>
                 <Item Key="Priority">1990010</Item>
+                <Item Key="Data">
+                    <Hash>
+                        <Item Key="AdditionalSearchParameters">
+                            <Hash>
+                            </Hash>
+                        </Item>
+                    </Hash>
+                </Item>
             </Hash>
         </Value>
     </Setting>
@@ -5182,6 +5190,14 @@
                 <Item Key="Description" Translatable="1">Customer user search</Item>
                 <Item Key="Block">ToolBarSearch</Item>
                 <Item Key="Priority">1990030</Item>
+                <Item Key="Data">
+                    <Hash>
+                        <Item Key="AdditionalSearchParameters">
+                            <Hash>
+                            </Hash>
+                        </Item>
+                    </Hash>
+                </Item>
             </Hash>
         </Value>
     </Setting>

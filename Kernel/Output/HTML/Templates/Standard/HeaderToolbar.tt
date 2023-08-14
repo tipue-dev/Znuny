@@ -93,17 +93,19 @@
                 <input type="hidden" name="Subaction" value="Search"/>
                 <input type="hidden" name="SearchTemplate" value="[% Translate("Search") | html %]"/>
                 <input type="hidden" name="CheckTicketNumberAndRedirect" value="1"/>
-                [% IF Data.SearchInArchive %]
-                    <input type="hidden" name="SearchInArchive" value="[% Data.SearchInArchive | html %]"/>
-                [% END %]
-                [% FOREACH Parameter IN Data.AdditionalSearchParameters %]
-                    <input type="hidden" name="[% Parameter.key | html %]" value="[% Parameter.value | html %]">
-                [% END %]
                 <input type="text" id="ToolBarSearchTerm" name="ToolBarSearchTerm" class="search-bar" />
 
                 <div class="component-wrapper">
                     <div class="search-dropdown-top">
 [% RenderBlockStart("ToolBarSearch") %]
+                        [% IF Data.Name == 'Fulltext' %]
+                            [% IF Data.SearchInArchive %]
+                                <input type="hidden" name="SearchInArchive" value="[% Data.SearchInArchive | html %]"/>
+                            [% END %]
+                        [% END %]
+                        [% FOREACH Parameter IN Data.AdditionalSearchParameters %]
+                            <input type="hidden" name="[% Parameter.key | html %]" value="[% Parameter.value | html %]">
+                        [% END %]
                         <label class="dropdown-item">
                             <input type="radio" id="ToolBarSearchBackend[% Data.Name %]" name="ToolBarSearchBackend"  value="ToolBarSearchBackend[% Data.Name %]" title="[% Translate(Data.Description) | html %]" [% Data.Checked | html %]/>
                             [% Translate(Data.Description) | html %]

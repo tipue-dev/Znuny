@@ -69,9 +69,11 @@ Core.Agent.Responsive = (function (TargetNS) {
 
         // add handles for navigation and sidebar
         if (!$('#ResponsiveSidebarHandle').length) {
+            console.log('case 1');
             $('.SidebarColumn').closest('.ResponsiveSidebarContainer').before('<span class="ResponsiveHandle" id="ResponsiveSidebarHandle"><i class="fa fa-sign-out"></i></span>');
         }
         if (!$('#ResponsiveNavigationHandle').length) {
+            console.log('case 2');
             $('#NavigationContainer').closest('.ResponsiveSidebarContainer').before('<span class="ResponsiveHandle" id="ResponsiveNavigationHandle"><i class="fa fa-navicon"></i></span>');
         }
 
