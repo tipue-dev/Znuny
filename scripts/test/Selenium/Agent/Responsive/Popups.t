@@ -69,7 +69,7 @@ $Selenium->RunTest(
         );
 
         # open the actions menu.
-        $Selenium->find_element(".mobile-action-option", "css")->click();
+        $Selenium->find_element( ".mobile-action-option", "css" )->click();
 
         sleep 240;
 

@@ -111,6 +111,7 @@ The following persons contributed to Znuny:
 * Thomas Wouters <thomas@sijn.org>
 * Thorsten Eckel <te@znuny.com>
 * Tim Puettmanns <tim.puettmanns@maxence.de>
+* Tim Püttmanns <tim.puettmanns@maxence.de>
 * Timo Gurr <timo.gurr@gmail.com>
 * Torsten Thau <Torsten.Thau@cape-it.de>
 * Udo Bretz <udo.bretz@otrs.com>
